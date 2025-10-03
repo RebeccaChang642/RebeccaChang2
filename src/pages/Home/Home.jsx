@@ -26,6 +26,10 @@ const Home = () => {
   useEffect(() => {
     if (!canvasRef.current) return
 
+    // 檢測當前主題
+    const isDarkMode = document.documentElement.classList.contains('dark') || 
+                       !document.documentElement.classList.contains('light')
+
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
     const renderer = new THREE.WebGLRenderer({ 
@@ -60,9 +64,9 @@ const Home = () => {
 
     const particlesMaterial = new THREE.PointsMaterial({
       size: 0.04,
-      color: '#ff6b6b',
+      color: isDarkMode ? '#ff6b6b' : '#ff8e8e',
       transparent: true,
-      opacity: 0.8,
+      opacity: isDarkMode ? 0.8 : 0.5,
       blending: THREE.AdditiveBlending,
       sizeAttenuation: true
     })
@@ -73,10 +77,10 @@ const Home = () => {
     // 添加幾何形狀作為互動元素
     const torusGeometry = new THREE.TorusGeometry(1.5, 0.3, 16, 100)
     const torusMaterial = new THREE.MeshBasicMaterial({ 
-      color: '#ff8e8e',
+      color: isDarkMode ? '#ff8e8e' : '#ff6b6b',
       wireframe: true,
       transparent: true,
-      opacity: 0.3
+      opacity: isDarkMode ? 0.3 : 0.2
     })
     const torus = new THREE.Mesh(torusGeometry, torusMaterial)
     scene.add(torus)

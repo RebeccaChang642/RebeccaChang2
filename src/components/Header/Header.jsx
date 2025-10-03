@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import ThemeToggle from '../ThemeToggle/ThemeToggle'
 import './Header.css'
 
 const Header = ({ isMenuOpen, toggleMenu }) => {
@@ -38,6 +39,9 @@ const Header = ({ isMenuOpen, toggleMenu }) => {
           <Link to="/portfolio" className="nav-link">作品集</Link>
           <Link to="/about" className="nav-link">關於我</Link>
           <Link to="/contact" className="nav-link">聯絡我</Link>
+          <div className="nav-theme-toggle">
+            <ThemeToggle />
+          </div>
         </nav>
 
         <motion.button

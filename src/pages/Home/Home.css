@@ -33,8 +33,9 @@
 /* ScrollTrigger 釘住場景 */
 .scroll-scene {
   height: 600vh; /* 與 JS end +=600% 對齊，避免提早結束 */
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
   position: relative;
+  transition: background 0.3s ease;
 }
 
 .three-canvas {
@@ -54,8 +55,19 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(10, 10, 10, 0.7) 0%, rgba(26, 26, 26, 0.7) 50%, rgba(42, 42, 42, 0.7) 100%);
+  background: linear-gradient(135deg, 
+    rgba(var(--bg-primary-rgb, 10, 10, 10), 0.7) 0%, 
+    rgba(var(--bg-secondary-rgb, 26, 26, 26), 0.7) 50%, 
+    rgba(var(--bg-tertiary-rgb, 42, 42, 42), 0.7) 100%);
   z-index: 1;
+  transition: background 0.3s ease;
+}
+
+.light .scene-sticky {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.7) 0%, 
+    rgba(247, 247, 247, 0.7) 50%, 
+    rgba(233, 236, 239, 0.7) 100%);
 }
 
 .banner-title {
@@ -64,11 +76,12 @@
   font-size: clamp(3rem, 8vw, 8rem);
   font-weight: 900;
   line-height: 0.9;
-  color: #ffffff;
+  color: var(--text-primary);
   text-align: center;
   will-change: transform, opacity;
   opacity: 1;
   visibility: visible;
+  transition: color 0.3s ease;
 }
 
 .scene-layer {
@@ -83,8 +96,8 @@
 }
 
 .scene-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 2rem;
   max-width: 720px;
@@ -103,17 +116,23 @@
   box-shadow: 0 10px 40px rgba(255, 107, 107, 0.2);
 }
 
+.light .scene-card:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
 .scene-card h3 {
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
+  transition: color 0.3s ease;
 }
 
 .scene-card p {
-  color: #cccccc;
+  color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 1rem;
+  transition: color 0.3s ease;
 }
 
 /* Hero Section */
@@ -224,7 +243,8 @@
 /* Projects Preview */
 .projects-preview {
   padding: 6rem 0;
-  background: #0a0a0a;
+  background: var(--bg-primary);
+  transition: background 0.3s ease;
 }
 
 .container {
@@ -252,11 +272,11 @@
 }
 
 .project-card {
-  background: #1a1a1a;
+  background: var(--bg-secondary);
   border-radius: 12px;
   overflow: hidden;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
 }
 
 .project-card:hover {
@@ -335,13 +355,15 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #ffffff;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
 }
 
 .project-content p {
-  color: #cccccc;
+  color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 1rem;
+  transition: color 0.3s ease;
 }
 
 .project-tags {
@@ -366,7 +388,8 @@
 /* Skills Section */
 .skills {
   padding: 6rem 0;
-  background: #1a1a1a;
+  background: var(--bg-secondary);
+  transition: background 0.3s ease;
 }
 
 .skills-grid {
@@ -376,10 +399,11 @@
 }
 
 .skill-item {
-  background: #0a0a0a;
+  background: var(--bg-primary);
   padding: 1.5rem;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
 }
 
 .skill-header {
@@ -391,19 +415,21 @@
 
 .skill-name {
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
 }
 
 .skill-level {
-  color: #ff6b6b;
+  color: var(--accent-primary);
   font-weight: 600;
 }
 
 .skill-bar {
   height: 8px;
-  background: #333;
+  background: var(--bg-tertiary);
   border-radius: 4px;
   overflow: hidden;
+  transition: background 0.3s ease;
 }
 
 .skill-progress {
@@ -426,13 +452,15 @@
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  color: #ffffff;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
 }
 
 .cta-content p {
   font-size: 1.1rem;
-  color: #cccccc;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
+  transition: color 0.3s ease;
 }
 
 /* 響應式設計 */
