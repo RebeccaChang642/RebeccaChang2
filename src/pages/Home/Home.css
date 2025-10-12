@@ -32,7 +32,7 @@
 
 /* ScrollTrigger 釘住場景 */
 .scroll-scene {
-  height: 600vh; /* 與 JS end +=600% 對齊，避免提早結束 */
+  height: 100vh; /* 與 JS end +=100% 對齊，最小高度 */
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
   position: relative;
   transition: background 0.3s ease;
@@ -387,7 +387,7 @@
 
 /* Skills Section */
 .skills {
-  padding: 6rem 0;
+  padding: 2rem 0;
   background: var(--bg-secondary);
   transition: background 0.3s ease;
 }
