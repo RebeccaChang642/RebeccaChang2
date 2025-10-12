@@ -572,26 +572,6 @@ const Home = () => {
     }
   }, [])
 
-  const projects = [
-    {
-      id: 1,
-      title: "電商平台",
-      description: "現代化的電商解決方案，提供流暢的購物體驗",
-      tags: ["React", "Node.js", "MongoDB"]
-    },
-    {
-      id: 2,
-      title: "行動應用",
-      description: "跨平台行動應用，整合多種功能模組",
-      tags: ["React Native", "Firebase", "TypeScript"]
-    },
-    {
-      id: 3,
-      title: "數據視覺化",
-      description: "互動式數據儀表板，提供即時分析",
-      tags: ["D3.js", "Python", "PostgreSQL"]
-    }
-  ]
 
   const skills = [
     { name: "React", level: 90 },
@@ -685,46 +665,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Projects Preview */}
-      <section className="projects-preview">
-        <div className="container">
-          <div>
-            <h2 className="section-title">精選作品</h2>
-          </div>
-          
-          <div className="projects-grid">
-            {projects.slice(2).map((project, index) => (
-              <div
-                key={project.id}
-                className="project-card"
-              >
-                <div className="project-image">
-                  <div className="project-placeholder">
-                    <span>{project.title}</span>
-                  </div>
-                </div>
-                <div className="project-content">
-                  <h3>{project.title}</h3>
-                  <p>{project.description}</p>
-                  <div className="project-tags">
-                    {project.tags.map((tag, tagIndex) => (
-                      <span key={tagIndex} className="tag">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div>
-            <div className="projects-cta">
-              <Link to="/portfolio" className="btn-primary">
-                查看所有作品
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Skills Section */}
       <section className="skills">
