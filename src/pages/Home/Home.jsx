@@ -74,16 +74,81 @@ const Home = () => {
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial)
     scene.add(particlesMesh)
 
-    // 添加幾何形狀作為互動元素
-    const torusGeometry = new THREE.TorusGeometry(1.5, 0.3, 16, 100)
-    const torusMaterial = new THREE.MeshBasicMaterial({ 
-      color: isDarkMode ? '#ff8e8e' : '#ff6b6b',
-      wireframe: true,
-      transparent: true,
-      opacity: isDarkMode ? 0.3 : 0.2
-    })
-    const torus = new THREE.Mesh(torusGeometry, torusMaterial)
-    scene.add(torus)
+    // 創建飄動的文字元素
+    const textGroup = new THREE.Group()
+    
+    // 創建 RebeccaChang 文字（亂序版本）
+    const scrambledText = "RebeccaChang"
+    const correctText = "Rebecca Chang"
+    
+    // 創建文字球體陣列
+    const createTextSpheres = (text, isCorrect = false) => {
+      const letters = text.split('')
+      letters.forEach((letter, index) => {
+        const sphereGeometry = new THREE.SphereGeometry(isCorrect ? 0.12 : 0.1, 8, 8)
+        const sphereMaterial = new THREE.MeshBasicMaterial({ 
+          color: isDarkMode ? '#ffed4e' : '#ffd700',
+          transparent: true,
+          opacity: isCorrect ? 1.0 : 0.8,
+          wireframe: !isCorrect
+        })
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial)
+        
+        // 初始位置（亂序排列）
+        if (!isCorrect) {
+          sphere.position.x = (index - letters.length / 2) * 0.3 + (Math.random() - 0.5) * 2
+          sphere.position.y = Math.sin(index) * 0.2 + (Math.random() - 0.5) * 1.5
+          sphere.position.z = Math.cos(index) * 0.2 + (Math.random() - 0.5) * 1
+        } else {
+          sphere.position.x = (index - letters.length / 2) * 0.3
+          sphere.position.y = Math.sin(index) * 0.2
+          sphere.position.z = Math.cos(index) * 0.2
+        }
+        
+        // 存儲原始位置用於動畫
+        sphere.userData = {
+          originalX: sphere.position.x,
+          originalY: sphere.position.y,
+          originalZ: sphere.position.z,
+          isCorrect: isCorrect
+        }
+        
+        textGroup.add(sphere)
+      })
+    }
+    
+    // 創建亂序文字
+    createTextSpheres(scrambledText, false)
+    
+    // 添加滑鼠互動檢測
+    let isHovered = false
+    let hoverStartTime = 0
+    const hoverDuration = 1000 // 1秒後變為正確字串
+    
+    const raycaster = new THREE.Raycaster()
+    const mouse = new THREE.Vector2()
+    
+    const checkIntersection = (event) => {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+      
+      raycaster.setFromCamera(mouse, camera)
+      const intersects = raycaster.intersectObjects(textGroup.children)
+      
+      if (intersects.length > 0) {
+        if (!isHovered) {
+          isHovered = true
+          hoverStartTime = Date.now()
+        }
+      } else {
+        isHovered = false
+        hoverStartTime = 0
+      }
+    }
+    
+    window.addEventListener('mousemove', checkIntersection)
+    
+    scene.add(textGroup)
 
     // 監聽鼠標移動
     const handleMouseMove = (event) => {
@@ -111,10 +176,43 @@ const Home = () => {
       particlesMesh.rotation.y = currentRotation.y + elapsedTime * 0.05
       particlesMesh.rotation.x = currentRotation.x + elapsedTime * 0.03
       
-      // 環形幾何旋轉
-      torus.rotation.x = -currentRotation.x * 2 + elapsedTime * 0.1
-      torus.rotation.y = -currentRotation.y * 2 + elapsedTime * 0.1
-      torus.rotation.z = elapsedTime * 0.05
+      // 文字飄動效果
+      textGroup.rotation.x = -currentRotation.x * 0.5 + elapsedTime * 0.05
+      textGroup.rotation.y = -currentRotation.y * 0.5 + elapsedTime * 0.03
+      textGroup.rotation.z = elapsedTime * 0.02
+      
+      // 檢查滑鼠懸停狀態
+      const currentTime = Date.now()
+      const shouldShowCorrect = isHovered && (currentTime - hoverStartTime) > hoverDuration
+      
+      // 文字個別飄動和重組
+      textGroup.children.forEach((child, index) => {
+        if (shouldShowCorrect) {
+          // 滑鼠懸停超過1秒時，文字重組為正確排列
+          const targetX = (index - textGroup.children.length / 2) * 0.3
+          const targetY = Math.sin(index) * 0.2
+          const targetZ = Math.cos(index) * 0.2
+          
+          child.position.x += (targetX - child.position.x) * 0.1
+          child.position.y += (targetY - child.position.y) * 0.1
+          child.position.z += (targetZ - child.position.z) * 0.1
+          
+          // 變為實心球體
+          child.material.wireframe = false
+          child.material.opacity = 1.0
+          child.scale.setScalar(Math.min(1.2, child.scale.x + 0.02))
+        } else {
+          // 正常飄動狀態
+          child.position.y += Math.sin(elapsedTime + index) * 0.002
+          child.position.x += Math.cos(elapsedTime * 0.5 + index) * 0.001
+          child.rotation.y += 0.01
+          
+          // 恢復線框模式
+          child.material.wireframe = true
+          child.material.opacity = 0.8
+          child.scale.setScalar(Math.max(1.0, child.scale.x - 0.02))
+        }
+      })
       
       // 粒子呼吸效果
       const positions = particlesGeometry.attributes.position.array
@@ -143,11 +241,10 @@ const Home = () => {
       cancelAnimationFrame(animationId)
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mousemove', checkIntersection)
       renderer.dispose()
       particlesGeometry.dispose()
       particlesMaterial.dispose()
-      torusGeometry.dispose()
-      torusMaterial.dispose()
     }
   }, [])
 
