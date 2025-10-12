@@ -1,0 +1,249 @@
+/* 拉燈開關樣式 */
+.theme-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+}
+
+.theme-toggle:hover .cord-handle {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.theme-toggle:hover .bulb-icon.active {
+  filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.8));
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+.theme-toggle:active .cord-handle {
+  transform: translateY(4px);
+  transition: transform 0.1s ease;
+}
+
+.theme-toggle:active .bulb-icon.active {
+  animation: bulbFlicker 0.3s ease-in-out;
+}
+
+/* 拉燈開關容器 */
+.pull-switch {
+  position: relative;
+  width: 50px;
+  height: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* 燈泡 */
+.light-bulb {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.bulb-icon {
+  width: 20px;
+  height: 20px;
+  color: #666;
+  transition: all 0.4s ease;
+  opacity: 0.7;
+}
+
+.bulb-icon.active {
+  color: #ffd700;
+  opacity: 1;
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6));
+  animation: bulbGlow 3s ease-in-out infinite alternate;
+}
+
+/* 燈泡發光效果 */
+.bulb-glow {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 11px;
+  border-radius: 50% 50% 0 0;
+  background: radial-gradient(ellipse at center top, rgba(255, 215, 0, 0.4) 0%, rgba(255, 165, 0, 0.3) 50%, transparent 70%);
+  opacity: 0;
+  transition: all 0.4s ease;
+  z-index: -1;
+}
+
+.bulb-glow.active {
+  opacity: 1;
+  animation: glowPulse 2s ease-in-out infinite alternate;
+}
+
+/* 拉繩 */
+.pull-cord {
+  position: relative;
+  width: 2px;
+  height: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cord-line {
+  width: 2px;
+  height: 20px;
+  background: linear-gradient(to bottom, #8b4513, #654321);
+  border-radius: 1px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.cord-handle {
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(145deg, #ffd700, #ffed4e);
+  border-radius: 50%;
+  margin-top: 3px;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* 背景光暈 */
+.ambient-glow {
+  position: absolute;
+  top: -8px;
+  left: -4px;
+  right: -4px;
+  bottom: 20px;
+  border-radius: 50% 50% 0 0;
+  opacity: 0;
+  transition: all 0.4s ease;
+  z-index: -2;
+}
+
+.ambient-glow.warm {
+  background: radial-gradient(ellipse at center top, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 50%, transparent 70%);
+  opacity: 1;
+  animation: warmAmbient 4s ease-in-out infinite alternate;
+}
+
+.ambient-glow.cool {
+  background: radial-gradient(ellipse at center top, rgba(65, 105, 225, 0.15) 0%, rgba(135, 206, 235, 0.1) 50%, transparent 70%);
+  opacity: 1;
+  animation: coolAmbient 4s ease-in-out infinite alternate;
+}
+
+/* 動畫效果 */
+@keyframes bulbGlow {
+  from {
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6));
+  }
+  to {
+    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.8));
+  }
+}
+
+@keyframes glowPulse {
+  from {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+@keyframes bulbFlicker {
+  0%, 100% {
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6));
+  }
+  25% {
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.8));
+  }
+  75% {
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+  }
+}
+
+@keyframes warmAmbient {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes coolAmbient {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+  .pull-switch {
+    width: 42px;
+    height: 60px;
+  }
+  
+  .light-bulb {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 5px;
+  }
+  
+  .bulb-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .bulb-glow {
+    width: 20px;
+    height: 10px;
+  }
+  
+  .cord-handle {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .cord-line {
+    height: 18px;
+  }
+  
+  .ambient-glow {
+    top: -6px;
+    left: -3px;
+    right: -3px;
+    bottom: 16px;
+  }
+}
