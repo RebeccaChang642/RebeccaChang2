@@ -64,7 +64,7 @@ const Home = () => {
 
     const particlesMaterial = new THREE.PointsMaterial({
       size: 0.04,
-      color: isDarkMode ? '#ff6b6b' : '#ff8e8e',
+      color: isDarkMode ? '#F5CB86' : '#7E5936',
       transparent: true,
       opacity: isDarkMode ? 0.8 : 0.5,
       blending: THREE.AdditiveBlending,
@@ -74,51 +74,99 @@ const Home = () => {
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial)
     scene.add(particlesMesh)
 
-    // 創建飄動的文字元素
+    // 創建飄動的立體字母元素
     const textGroup = new THREE.Group()
     
-    // 創建 RebeccaChang 文字（亂序版本）
-    const scrambledText = "RebeccaChang"
-    const correctText = "Rebecca Chang"
+    // 目標文字
+    const targetText = "Rebecca Chang"
+    const letters = targetText.split('')
     
-    // 創建文字球體陣列
-    const createTextSpheres = (text, isCorrect = false) => {
-      const letters = text.split('')
+    // 創建立體字母
+    const create3DLetters = () => {
       letters.forEach((letter, index) => {
-        const sphereGeometry = new THREE.SphereGeometry(isCorrect ? 0.12 : 0.1, 8, 8)
-        const sphereMaterial = new THREE.MeshBasicMaterial({ 
-          color: isDarkMode ? '#ffed4e' : '#ffd700',
+        // 跳過空格
+        if (letter === ' ') return
+        
+        // 創建立方體作為字母的基礎形狀
+        let letterGeometry
+        switch(letter.toLowerCase()) {
+          case 'r':
+            letterGeometry = new THREE.BoxGeometry(0.3, 0.5, 0.2)
+            break
+          case 'e':
+            letterGeometry = new THREE.BoxGeometry(0.3, 0.5, 0.2)
+            break
+          case 'b':
+            letterGeometry = new THREE.BoxGeometry(0.3, 0.5, 0.2)
+            break
+          case 'c':
+            letterGeometry = new THREE.CylinderGeometry(0.25, 0.25, 0.2, 8, 1, false, 0, Math.PI)
+            break
+          case 'a':
+            letterGeometry = new THREE.ConeGeometry(0.3, 0.5, 6)
+            break
+          case 'h':
+            letterGeometry = new THREE.BoxGeometry(0.3, 0.5, 0.2)
+            break
+          case 'n':
+            letterGeometry = new THREE.BoxGeometry(0.3, 0.5, 0.2)
+            break
+          case 'g':
+            letterGeometry = new THREE.BoxGeometry(0.3, 0.5, 0.2)
+            break
+          default:
+            letterGeometry = new THREE.BoxGeometry(0.3, 0.5, 0.2)
+        }
+        
+        const letterMaterial = new THREE.MeshBasicMaterial({ 
+          color: isDarkMode ? '#F5CB86' : '#7E5936',
           transparent: true,
-          opacity: isCorrect ? 1.0 : 0.8,
-          wireframe: !isCorrect
+          opacity: 0.8,
+          wireframe: true
         })
-        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial)
         
-        // 初始位置（亂序排列）
-        if (!isCorrect) {
-          sphere.position.x = (index - letters.length / 2) * 0.3 + (Math.random() - 0.5) * 2
-          sphere.position.y = Math.sin(index) * 0.2 + (Math.random() - 0.5) * 1.5
-          sphere.position.z = Math.cos(index) * 0.2 + (Math.random() - 0.5) * 1
-        } else {
-          sphere.position.x = (index - letters.length / 2) * 0.3
-          sphere.position.y = Math.sin(index) * 0.2
-          sphere.position.z = Math.cos(index) * 0.2
+        const letterMesh = new THREE.Mesh(letterGeometry, letterMaterial)
+        
+        // 計算正確位置（考慮空格）
+        let correctX = 0
+        for (let i = 0; i < index; i++) {
+          if (targetText[i] === ' ') {
+            correctX += 0.4 // 空格寬度
+          } else {
+            correctX += 0.35 // 字母寬度
+          }
+        }
+        correctX -= (targetText.replace(/\s/g, '').length * 0.35) / 2 // 置中
+        
+        // 初始位置（亂序分散）
+        letterMesh.position.x = correctX + (Math.random() - 0.5) * 8
+        letterMesh.position.y = (Math.random() - 0.5) * 6
+        letterMesh.position.z = (Math.random() - 0.5) * 4
+        
+        // 隨機旋轉
+        letterMesh.rotation.x = Math.random() * Math.PI * 2
+        letterMesh.rotation.y = Math.random() * Math.PI * 2
+        letterMesh.rotation.z = Math.random() * Math.PI * 2
+        
+        // 存儲目標位置和字母資訊
+        letterMesh.userData = {
+          targetX: correctX,
+          targetY: 0,
+          targetZ: 0,
+          targetRotationX: 0,
+          targetRotationY: 0,
+          targetRotationZ: 0,
+          letter: letter,
+          index: index,
+          isForming: false
         }
         
-        // 存儲原始位置用於動畫
-        sphere.userData = {
-          originalX: sphere.position.x,
-          originalY: sphere.position.y,
-          originalZ: sphere.position.z,
-          isCorrect: isCorrect
-        }
-        
-        textGroup.add(sphere)
+        textGroup.add(letterMesh)
       })
     }
     
-    // 創建亂序文字
-    createTextSpheres(scrambledText, false)
+    // 創建立體字母
+    create3DLetters()
     
     // 添加滑鼠互動檢測
     let isHovered = false
@@ -176,41 +224,62 @@ const Home = () => {
       particlesMesh.rotation.y = currentRotation.y + elapsedTime * 0.05
       particlesMesh.rotation.x = currentRotation.x + elapsedTime * 0.03
       
-      // 文字飄動效果
-      textGroup.rotation.x = -currentRotation.x * 0.5 + elapsedTime * 0.05
-      textGroup.rotation.y = -currentRotation.y * 0.5 + elapsedTime * 0.03
-      textGroup.rotation.z = elapsedTime * 0.02
+      // 文字組整體旋轉
+      textGroup.rotation.x = -currentRotation.x * 0.3 + elapsedTime * 0.02
+      textGroup.rotation.y = -currentRotation.y * 0.3 + elapsedTime * 0.01
+      textGroup.rotation.z = elapsedTime * 0.01
       
       // 檢查滑鼠懸停狀態
       const currentTime = Date.now()
-      const shouldShowCorrect = isHovered && (currentTime - hoverStartTime) > hoverDuration
+      const hoverProgress = isHovered ? Math.min(1, (currentTime - hoverStartTime) / hoverDuration) : 0
       
-      // 文字個別飄動和重組
-      textGroup.children.forEach((child, index) => {
-        if (shouldShowCorrect) {
-          // 滑鼠懸停超過1秒時，文字重組為正確排列
-          const targetX = (index - textGroup.children.length / 2) * 0.3
-          const targetY = Math.sin(index) * 0.2
-          const targetZ = Math.cos(index) * 0.2
+      // 字母動畫邏輯
+      textGroup.children.forEach((letterMesh, index) => {
+        const userData = letterMesh.userData
+        
+        if (hoverProgress > 0) {
+          // 滑鼠懸停時：字母慢慢移動到正確位置形成字串
+          const targetPos = {
+            x: userData.targetX,
+            y: userData.targetY,
+            z: userData.targetZ
+          }
           
-          child.position.x += (targetX - child.position.x) * 0.1
-          child.position.y += (targetY - child.position.y) * 0.1
-          child.position.z += (targetZ - child.position.z) * 0.1
+          // 平滑移動到目標位置
+          letterMesh.position.x += (targetPos.x - letterMesh.position.x) * (0.05 + hoverProgress * 0.1)
+          letterMesh.position.y += (targetPos.y - letterMesh.position.y) * (0.05 + hoverProgress * 0.1)
+          letterMesh.position.z += (targetPos.z - letterMesh.position.z) * (0.05 + hoverProgress * 0.1)
           
-          // 變為實心球體
-          child.material.wireframe = false
-          child.material.opacity = 1.0
-          child.scale.setScalar(Math.min(1.2, child.scale.x + 0.02))
+          // 旋轉到正確角度（正立）
+          letterMesh.rotation.x += (userData.targetRotationX - letterMesh.rotation.x) * (0.03 + hoverProgress * 0.07)
+          letterMesh.rotation.y += (userData.targetRotationY - letterMesh.rotation.y) * (0.03 + hoverProgress * 0.07)
+          letterMesh.rotation.z += (userData.targetRotationZ - letterMesh.rotation.z) * (0.03 + hoverProgress * 0.07)
+          
+          // 變為實心，確保清晰可見
+          letterMesh.material.wireframe = hoverProgress < 0.8
+          letterMesh.material.opacity = 0.8 + (hoverProgress * 0.2)
+          
+          userData.isForming = hoverProgress > 0.5
         } else {
-          // 正常飄動狀態
-          child.position.y += Math.sin(elapsedTime + index) * 0.002
-          child.position.x += Math.cos(elapsedTime * 0.5 + index) * 0.001
-          child.rotation.y += 0.01
+          // 正常狀態：跟著粒子系統飄動
+          const particleInfluence = 0.3
+          const timeOffset = index * 0.5
           
-          // 恢復線框模式
-          child.material.wireframe = true
-          child.material.opacity = 0.8
-          child.scale.setScalar(Math.max(1.0, child.scale.x - 0.02))
+          // 跟著粒子系統的旋轉和運動
+          letterMesh.position.x += Math.sin(elapsedTime * 0.2 + timeOffset) * 0.002 * particleInfluence
+          letterMesh.position.y += Math.cos(elapsedTime * 0.3 + timeOffset) * 0.001 * particleInfluence
+          letterMesh.position.z += Math.sin(elapsedTime * 0.15 + timeOffset) * 0.0008 * particleInfluence
+          
+          // 持續旋轉
+          letterMesh.rotation.x += 0.003
+          letterMesh.rotation.y += 0.005
+          letterMesh.rotation.z += 0.002
+          
+          // 保持線框模式
+          letterMesh.material.wireframe = true
+          letterMesh.material.opacity = 0.8
+          
+          userData.isForming = false
         }
       })
       
