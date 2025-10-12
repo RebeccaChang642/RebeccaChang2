@@ -126,13 +126,13 @@ const Home = () => {
     const hoverDuration = 1000 // 1秒後變為正確字串
     
     const raycaster = new THREE.Raycaster()
-    const mouse = new THREE.Vector2()
+    const mouseVector = new THREE.Vector2()
     
     const checkIntersection = (event) => {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+      mouseVector.x = (event.clientX / window.innerWidth) * 2 - 1
+      mouseVector.y = -(event.clientY / window.innerHeight) * 2 + 1
       
-      raycaster.setFromCamera(mouse, camera)
+      raycaster.setFromCamera(mouseVector, camera)
       const intersects = raycaster.intersectObjects(textGroup.children)
       
       if (intersects.length > 0) {
