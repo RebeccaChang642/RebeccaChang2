@@ -460,7 +460,7 @@ const Home = () => {
         scrollTrigger: {
           trigger: sceneRef.current,
           start: 'top top',
-          end: '+=400%',
+          end: '+=600%',
           scrub: 1,
           pin: true,
           anticipatePin: 1
@@ -559,7 +559,7 @@ const Home = () => {
         ease: 'back.out(1.2)'
       }, '<')
       // 作品 5 停留
-      .to({}, { duration: 0.5 })
+      .to({}, { duration: 0.3 })
     })
 
     // 延遲刷新確保正確計算
